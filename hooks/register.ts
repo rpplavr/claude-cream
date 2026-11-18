@@ -37,7 +37,8 @@ const { theme, problems } = makeColors({
   },
 })
 
-const LOOK: ThemeSetArgs = { colors: theme }
+// A flat ground in the page color, so the frosted sidebar and panels match the chat.
+const LOOK: ThemeSetArgs = { colors: theme, backdrop: { color: 'surface-0' } }
 
 // The choice is kept in $.store, so it lasts across sessions. On by default.
 async function isOn($: { store: { get(key: string): Promise<unknown> } }): Promise<boolean> {
