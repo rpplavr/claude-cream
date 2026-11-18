@@ -1,0 +1,5 @@
+{
+  "name": "claude-cream",
+  "owner": { "name": "rpplavr" },
+  "plugins": [{ "name": "claude-cream", "source": "./" }]
+}
