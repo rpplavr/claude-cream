@@ -9,8 +9,9 @@ const { theme, problems } = makeColors({
   light: {
     gray: {
       anchors: {
-        'surface-0': '#F0ECE0',
-        'surface-1': '#F5F2EA',
+        // One color for the sidebar, the chat and the side panels.
+        'surface-0': '#FAF8F3',
+        'surface-1': '#FAF8F3',
         'surface-2': '#FAF8F3',
         'text-primary': '#141413',
         'text-secondary': '#3D3D3A',
@@ -23,10 +24,11 @@ const { theme, problems } = makeColors({
     roles: { danger: '#D97757', success: '#8FA86B', warning: '#D4952B', pro: '#A080C8' },
     gray: {
       anchors: {
+        // One color for the sidebar, the chat and the side panels; menus a step lighter.
         'surface-0': '#262624',
-        'surface-1': '#2B2B29',
-        'surface-2': '#30302E',
-        'surface-3': '#353533',
+        'surface-1': '#262624',
+        'surface-2': '#262624',
+        'surface-3': '#2B2B29',
         'text-primary': '#F0EEE6',
         'text-secondary': '#CFCDC4',
         'text-muted': '#B0AEA5',
