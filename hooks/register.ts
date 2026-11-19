@@ -1,4 +1,4 @@
-import type { Register, ThemeSetArgs } from 'claude-code'
+import type { EngineInterface, Register, ThemeSetArgs } from 'claude-code'
 
 import { makeColors } from './make-colors.js'
 
@@ -41,8 +41,14 @@ const { theme, problems } = makeColors({
 const LOOK: ThemeSetArgs = { colors: theme, backdrop: { color: 'surface-0' } }
 
 // The choice is kept in $.store, so it lasts across sessions. On by default.
-async function isOn($: { store: { get(key: string): Promise<unknown> } }): Promise<boolean> {
+async function isOn($: EngineInterface): Promise<boolean> {
   return (await $.store.get('enabled')) !== false
+}
+
+// Sets the look and says in the status line why it is not drawn, or clears that note once it is.
+async function applyLook($: EngineInterface): Promise<void> {
+  const set = await $.theme.set(LOOK)
+  $.ui.status(set.isDrawn ? undefined : set.reason)
 }
 
 export const register: Register = on => {
@@ -56,12 +62,18 @@ export const register: Register = on => {
       if (unpainted !== undefined) {
         $.ui.toast(unpainted)
       }
-      const set = await $.theme.set(LOOK)
-      if (!set.isDrawn) {
-        $.ui.status(set.reason)
-      }
+      await applyLook($)
     }
     return next(e)
+  })
+
+  // A session started before any app attached: paint it once one does, and drop the "not drawn" note.
+  on('session.attach', async ($, e, next) => {
+    const result = await next(e)
+    if (await isOn($)) {
+      await applyLook($)
+    }
+    return result
   })
 
   on('command.run', { command: 'cream' }, async ($, e) => {
@@ -69,10 +81,11 @@ export const register: Register = on => {
     const want = arg === 'on' ? true : arg === 'off' ? false : !(await isOn($))
     await $.store.set('enabled', want)
     if (want) {
-      await $.theme.set(LOOK)
+      await applyLook($)
       return { text: 'Claude Cream theme on.' }
     }
     await $.theme.clear()
+    $.ui.status(undefined)
     return { text: 'Default theme restored.' }
   })
 }
