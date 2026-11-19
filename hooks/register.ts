@@ -45,10 +45,11 @@ async function isOn($: EngineInterface): Promise<boolean> {
   return (await $.store.get('enabled')) !== false
 }
 
-// Sets the look and says in the status line why it is not drawn, or clears that note once it is.
+// Sets the look. No status note when it is not drawn (a session with no app attached says so for good);
+// the status call clears any note an earlier version left.
 async function applyLook($: EngineInterface): Promise<void> {
-  const set = await $.theme.set(LOOK)
-  $.ui.status(set.isDrawn ? undefined : set.reason)
+  await $.theme.set(LOOK)
+  $.ui.status(undefined)
 }
 
 export const register: Register = on => {
